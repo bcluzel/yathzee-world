@@ -1,5 +1,6 @@
 use actix_web::dev::{ServiceRequest, ServiceResponse, fn_service};
 use actix_web::{App, HttpResponse, HttpServer, Responder, get, web};
+use log;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -9,6 +10,7 @@ async fn hello() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init();
+    log::info!("yathee-world init");
     HttpServer::new(|| {
         App::new()
             .service(web::scope("/api").service(hello))
@@ -25,7 +27,7 @@ async fn main() -> std::io::Result<()> {
                     })),
             )
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
