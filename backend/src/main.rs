@@ -11,7 +11,11 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     log::info!("yathee-world init");
     let config = config::load_config();
-    log::info!("Starting http server");
+    let host: String = std::env::var("HOST").unwrap_or("127.0.0.1".to_owned());
+    let port: u16 = std::env::var("PORT")
+        .map(|x| x.parse().expect("Incorrect port: not a number"))
+        .unwrap_or(8080);
+    log::info!("Starting http server listening to {host}:{port}");
 
     let session_secret_key = Key::from(config.key.as_slice());
 
@@ -36,7 +40,7 @@ async fn main() -> std::io::Result<()> {
                     })),
             )
     })
-    .bind(("0.0.0.0", 8080))?
+    .bind((host, port))?
     .run()
     .await
 }

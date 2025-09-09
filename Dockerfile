@@ -47,6 +47,8 @@ COPY --from=frontend-builder /workdir/build ./static-frontend
 
 # Expose port 8080
 EXPOSE 8080
+ENV PORT=8080
+ENV HOST=0.0.0.0
 
 # Run the server
 CMD ["/bin/sh", "-c", "RUST_LOG=${LOG_LEVEL} ./yathzee-world"]
