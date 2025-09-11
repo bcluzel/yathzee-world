@@ -18,12 +18,7 @@ fn save_config(path: &String, config: &Config) {
     fs::write(path, config_str).unwrap();
 }
 
-pub fn load_config() -> Config {
-    let workdir_path = "./workdir";
-    if !fs::exists(workdir_path).unwrap() {
-        log::info!("Workdir not found, creating.");
-        fs::create_dir(workdir_path).unwrap();
-    }
+pub fn load_config(workdir_path: &String) -> Config {
     let config_path = workdir_path.to_string() + "/config.toml";
     log::info!("Config path: {}", config_path);
     if fs::exists(&config_path).unwrap() {

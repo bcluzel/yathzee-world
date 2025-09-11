@@ -29,7 +29,7 @@ RUN cargo build --release
 COPY backend/src ./src
 
 # Build release binary
-RUN cargo build --release
+RUN cargo build --release --features staticserve
 
 
 # FINAL IMAGE
