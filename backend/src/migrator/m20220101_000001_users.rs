@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                     .col(string(Users::Username))
                     .col(string(Users::Email))
                     .col(string(Users::PasswordSalt))
-                    .col(string(Users::PasswordHashedHex))
+                    .col(string(Users::PasswordHashed))
                     .to_owned(),
             )
             .await
@@ -35,5 +35,5 @@ enum Users {
     Username,
     Email,
     PasswordSalt,
-    PasswordHashedHex,
+    PasswordHashed,
 }

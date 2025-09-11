@@ -13,6 +13,7 @@ use sea_orm_migration::prelude::*;
 use std::fs;
 mod api;
 mod config;
+mod entities;
 mod migrator;
 
 #[actix_web::main]
@@ -31,7 +32,7 @@ async fn main() -> std::io::Result<()> {
     log::info!("Database connected");
     let config = config::load_config(&workdir_path);
     log::info!("Loaded config");
-    migrator::Migrator::refresh(&db).await.unwrap();
+    migrator::Migrator::up(&db, None).await.unwrap();
     log::info!("Database configured");
     let host: String = std::env::var("HOST").unwrap_or("127.0.0.1".to_owned());
     let port: u16 = std::env::var("PORT")
