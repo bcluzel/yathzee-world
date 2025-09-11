@@ -2,10 +2,10 @@
 	<legend class="fieldset-legend">Login</legend>
 
 	<label class="label" for="email">Email</label>
-	<input type="email" class="input" placeholder="Email" />
+	<input type="email" class="input" placeholder="Email" autocomplete="username" />
 
 	<label class="label" for="password">Password</label>
-	<input type="password" class="input" placeholder="Password" />
+	<input type="password" class="input" placeholder="Password" autocomplete="current-password" />
 
 	<button class="btn btn-neutral mt-4">Login</button>
 </fieldset>

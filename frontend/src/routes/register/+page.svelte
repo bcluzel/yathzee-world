@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '$lib/userManagement';
+	import { registerUser } from '$lib/userManagement';
 
 	let username = $state('');
 	let email = $state('');
@@ -48,12 +48,13 @@
 		<br />containing only letters, numbers or dash
 	</p>
 	<label class="label" for="email">Email</label>
-	<input class="input validator" type="email" bind:value={email} />
+	<input class="input validator" type="email" autocomplete="username" bind:value={email} />
 	<div class="validator-hint hidden">Enter valid email address</div>
 	<label class="label" for="password">Password</label>
 	<input
 		type="password"
 		class="input validator"
+		autocomplete="new-password"
 		required
 		minlength="8"
 		pattern={'(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'}
@@ -71,6 +72,7 @@
 		type="password"
 		id="password-validation"
 		class="input"
+		autocomplete="new-password"
 		required
 		bind:value={passwordValidation}
 	/>
