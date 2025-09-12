@@ -48,4 +48,8 @@
 	/>
 
 	<button type="submit" class="btn btn-neutral mt-4">Login</button>
+
+	<div class="divider"></div>
+	No account yet ?
+	<a class="btn btn-link btn-outline" href={resolve('/register')}>Register here</a>
 </form>

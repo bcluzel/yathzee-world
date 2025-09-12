@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { registerUser, type UserRegistrationData } from '$lib/userManagement';
+	import { registerUser, type UserRegistrationData } from '$lib/userManagement.svelte';
 	import { toast } from 'svelte-sonner';
 
 	let username = $state('');
