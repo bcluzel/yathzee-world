@@ -2,7 +2,10 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	let { children } = $props();
+	import { Toaster } from 'svelte-sonner';
 </script>
+
+<Toaster richColors theme="system" />
 
 <svelte:head>
 	<link rel="icon" href={favicon} />

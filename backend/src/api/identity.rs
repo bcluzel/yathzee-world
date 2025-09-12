@@ -1,6 +1,6 @@
 use crate::entities::{self, users};
 use actix_identity::Identity;
-use actix_web::{HttpMessage, HttpRequest, HttpResponse, Responder, http::StatusCode, post, web};
+use actix_web::{HttpMessage, HttpRequest, HttpResponse, Responder, post, web};
 use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
@@ -54,7 +54,7 @@ async fn register(
         .one(db.get_ref())
         .await
     {
-        log::debug!("User already found: {user:?}");
+        log::debug!("Email already found: {user:?}");
         return Err(actix_web::error::ErrorConflict("Email already taken"));
     }
 

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { registerUser } from '$lib/userManagement';
+	import { registerUser, type UserRegistrationData } from '$lib/userManagement';
+	import { toast } from 'svelte-sonner';
+	import { redirect } from '@sveltejs/kit';
 
 	let username = $state('');
 	let email = $state('');
@@ -19,11 +21,12 @@
 			password: password
 		};
 		try {
-			registerUser(data);
+			await registerUser(data);
 		} catch (err) {
-			alert('Unexpected error from backend!');
-			console.error(err);
+			toast.error(`${err}`);
+			return;
 		}
+		redirect(303, '/');
 	}
 </script>
 

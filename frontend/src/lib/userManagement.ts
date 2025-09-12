@@ -1,10 +1,10 @@
-interface UserRegistrationData {
+export interface UserRegistrationData {
 	username: string;
 	email: string;
 	password: string;
 }
 
-interface UserLoginData {
+export interface UserLoginData {
 	email: string;
 	password: string;
 }
@@ -17,9 +17,20 @@ export async function registerUser(data: UserRegistrationData) {
 		},
 		body: JSON.stringify(data)
 	});
-	console.log(response);
 	if (!response.ok) {
-		const err = await response.json().catch(() => ({}));
-		throw new Error(`User registering request faild with error ${err}`);
+		throw new Error(`User login failed: ${await response.text()}`);
+	}
+}
+
+export async function loginUser(data: UserLoginData) {
+	const response = await fetch('/api/identity/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	});
+	if (!response.ok) {
+		throw new Error(`User login failed: ${await response.text()}`);
 	}
 }

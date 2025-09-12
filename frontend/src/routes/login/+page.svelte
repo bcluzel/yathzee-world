@@ -1,4 +1,31 @@
-<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+<script lang="ts">
+	import { loginUser, type UserLoginData } from '$lib/userManagement';
+	import { redirect } from '@sveltejs/kit';
+	import { toast } from 'svelte-sonner';
+
+	let email = $state('');
+	let password = $state('');
+
+	async function validateAndRegisterUser() {
+		console.log('Validating form and registering user');
+		let data: UserLoginData = {
+			email: email,
+			password: password
+		};
+		try {
+			await loginUser(data);
+		} catch (err) {
+			toast.error(`${err}`);
+			return;
+		}
+		redirect(303, '/');
+	}
+</script>
+
+<form
+	class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4"
+	onsubmit={validateAndRegisterUser}
+>
 	<legend class="fieldset-legend">Login</legend>
 
 	<label class="label" for="email">Email</label>
@@ -7,5 +34,5 @@
 	<label class="label" for="password">Password</label>
 	<input type="password" class="input" placeholder="Password" autocomplete="current-password" />
 
-	<button class="btn btn-neutral mt-4">Login</button>
-</fieldset>
+	<button type="submit" class="btn btn-neutral mt-4">Login</button>
+</form>
