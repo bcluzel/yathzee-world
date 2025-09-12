@@ -18,7 +18,12 @@ export async function registerUser(data: UserRegistrationData) {
 		body: JSON.stringify(data)
 	});
 	if (!response.ok) {
-		throw new Error(`User login failed: ${await response.text()}`);
+		switch (response.status) {
+			case 500:
+				throw new Error(`Internal server error`);
+			default:
+				throw new Error(`User registering failed: ${await response.text()}`);
+		}
 	}
 }
 
