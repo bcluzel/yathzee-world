@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { registerUser, type UserRegistrationData } from '$lib/userManagement';
 	import { toast } from 'svelte-sonner';
-	import { redirect } from '@sveltejs/kit';
 
 	let username = $state('');
 	let email = $state('');
@@ -26,7 +27,7 @@
 			toast.error(`${err}`);
 			return;
 		}
-		redirect(303, '/');
+		await goto(resolve('/'));
 	}
 </script>
 
