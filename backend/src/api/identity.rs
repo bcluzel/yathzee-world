@@ -1,6 +1,6 @@
 use crate::entities::{self, users};
 use actix_identity::Identity;
-use actix_web::{HttpMessage, HttpRequest, HttpResponse, Responder, post, web};
+use actix_web::{HttpMessage, HttpRequest, HttpResponse, Responder, get, post, web};
 use argon2::{
     Argon2,
     password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
@@ -14,6 +14,18 @@ struct RegisterRequest {
     username: String,
     email: String,
     password: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct LoginRequest {
+    email: String,
+    password: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct UserInfoAnswer {
+    username: String,
+    email: String,
 }
 
 fn hash_password(password: &str) -> Result<(String, String), argon2::password_hash::Error> {
@@ -69,21 +81,48 @@ async fn register(
 }
 
 #[post("/login")]
-async fn login(db: web::Data<DatabaseConnection>, request: HttpRequest) -> impl Responder {
-    // Some kind of authentication should happen here
-    // e.g. password-based, biometric, etc.
-    // [...]
+async fn login(
+    db: web::Data<DatabaseConnection>,
+    request: HttpRequest,
+    json: web::Json<LoginRequest>,
+) -> actix_web::Result<impl Responder> {
+    let user = entities::prelude::Users::find()
+        .filter(users::Column::Email.contains(json.email.to_owned()))
+        .one(db.get_ref())
+        .await
+        .map_err(|_| actix_web::error::ErrorInternalServerError("Database error"))?
+        .ok_or(actix_web::error::ErrorNotFound("Incorrect email"))?;
 
-    // attach a verified user identity to the active session
-    Identity::login(&request.extensions(), "User1".into()).unwrap();
-
-    HttpResponse::Ok()
+    let parsed_hash = PasswordHash::new(&user.password_hashed)
+        .map_err(|_| actix_web::error::ErrorInternalServerError("Password decryption error"))?;
+    Argon2::default()
+        .verify_password(json.password.as_bytes(), &parsed_hash)
+        .map_err(|_| actix_web::error::ErrorUnauthorized("Incorrect password"))?;
+    Identity::login(&request.extensions(), user.id.to_string()).unwrap();
+    Ok(HttpResponse::Ok())
 }
 
 #[post("/logout")]
-async fn logout(user: Identity) -> impl Responder {
+async fn logout(user: Identity) -> actix_web::Result<impl Responder> {
     user.logout();
-    HttpResponse::Ok()
+    Ok(HttpResponse::Ok())
+}
+
+#[get("/info")]
+async fn info(
+    user: Identity,
+    db: web::Data<DatabaseConnection>,
+) -> actix_web::Result<impl Responder> {
+    let user = entities::prelude::Users::find_by_id(user.id().unwrap().parse::<i32>().unwrap())
+        .one(db.get_ref())
+        .await
+        .map_err(|_| actix_web::error::ErrorInternalServerError("Database error"))?
+        .ok_or(actix_web::error::ErrorInternalServerError("user not found"))?;
+    let ans = UserInfoAnswer {
+        username: user.username,
+        email: user.email,
+    };
+    Ok(HttpResponse::Ok().json(ans))
 }
 
 pub fn scoped_identity_api(cfg: &mut web::ServiceConfig) {
@@ -91,6 +130,7 @@ pub fn scoped_identity_api(cfg: &mut web::ServiceConfig) {
         web::scope("/identity")
             .service(login)
             .service(logout)
-            .service(register),
+            .service(register)
+            .service(info),
     );
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loginUser, type UserLoginData } from '$lib/userManagement';
+	import { loginUser, type UserLoginData } from '$lib/userManagement.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
@@ -30,10 +30,22 @@
 	<legend class="fieldset-legend">Login</legend>
 
 	<label class="label" for="email">Email</label>
-	<input type="email" class="input" placeholder="Email" autocomplete="username" />
+	<input
+		type="email"
+		class="input"
+		placeholder="Email"
+		autocomplete="username"
+		bind:value={email}
+	/>
 
 	<label class="label" for="password">Password</label>
-	<input type="password" class="input" placeholder="Password" autocomplete="current-password" />
+	<input
+		type="password"
+		class="input"
+		placeholder="Password"
+		autocomplete="current-password"
+		bind:value={password}
+	/>
 
 	<button type="submit" class="btn btn-neutral mt-4">Login</button>
 </form>
